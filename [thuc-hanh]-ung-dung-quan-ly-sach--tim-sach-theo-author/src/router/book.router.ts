@@ -69,16 +69,12 @@ bookRoutes.get('/list', async (req, res) => {
         // sau đó cho điều kiện query hoặc theo keyword hoặc theo author
         let authorID = await Author.find({name: {$regex: authorFind, $options: "gim"}}, {"_id": 1})
         query = {
-            $or: [{
-                "keywords.keyword": {
-                    $regex: `${keyword}`, $options: "gim"
-                }
-            }, {
-                author: {
-                    $in: authorID
-                }
+            "keywords.keyword": {
+                $regex: `${keyword}`, $options: "gim"
+            },
+            author: {
+                $in: authorID
             }
-            ]
         }
 
         const books = await Book.find(query).populate({
