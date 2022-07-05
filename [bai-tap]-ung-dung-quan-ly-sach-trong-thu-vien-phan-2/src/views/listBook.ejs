@@ -24,11 +24,29 @@
             location.reload();
         };
 
+        async function changeCategory(value) {
+            // await $.get("", {category: value});
+            // location.reload();
+
+            await $.ajax({
+                url: ``,
+                type: "GET",
+                data: `category=${value}`,
+                success: function (result) {
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(xhr.status);
+                    console.log(thrownError);
+                }
+            });
+            // location.reload();
+        }
+
     </script>
 </head>
 
 <body>
-<form action="/book/list" method="GET">
+<form action="" method="GET">
     <label>Keyword:</label>
     <input type="text" id="keyword" name="keyword" value="<%= keywordFind %>">
     <p>Or</p>
@@ -37,6 +55,20 @@
     </br>
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<label for="category">Choose a category:</label>
+<form>
+
+    <select name="category" id="category" <!--onchange="changeCategory(this.value)"-->>
+        <option value="all">All</option>
+        <% categories.forEach(category => { %>
+            <option value="<%= category._id %>"><%= category.type %></option>
+        <% }) %>
+    </select>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Sort</button>
     </div>
 </form>
 

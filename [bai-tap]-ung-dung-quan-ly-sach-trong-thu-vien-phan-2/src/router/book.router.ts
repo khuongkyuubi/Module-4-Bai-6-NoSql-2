@@ -83,11 +83,39 @@ bookRoutes.get('/list', async (req, res) => {
         let query = {};
         let keywordFind = req.query.keyword || "";
         let publisherFind = req.query.publisher || "";
+        let categoryFind = req.query.category || "";
 
         let publisherID = await publisherModel.find({name: {$regex: publisherFind, $options: "gim"}}, {"_id": 1})
-        console.log(publisherID)
-
+        // console.log(publisherID)
         query = {"keywords.keyword": {$regex: keywordFind, $options: "gim"}, "publisher": {$in: publisherID}}
+
+
+        const categories = await categoryModel.find({});
+        let categoriesId = categories.map((category) => {
+            return {"_id": category["_id"]}
+        })
+
+        // kiểm tra xem category có nằm trong danh sách hay không
+
+        for (const category of categoriesId) {
+            if (String(category._id) === categoryFind) {
+                query["category"] = categoryFind;
+                break;
+            }
+        }
+
+        if (!query["category"]) {
+
+        }
+        // if (categoryFind) {
+        //
+        //     query["category"] = categoryFind;
+        //     console.log(categoryFind)
+        //     // console.log(query)
+        // }
+
+
+        // console.log(categories)
 
 
         const books = await bookModel.find(query).populate([{path: "publisher", select: "name"}, {
@@ -95,9 +123,10 @@ bookRoutes.get('/list', async (req, res) => {
             select: "type"
         }]);
         // dùng populate để join auhtor từ bên collection author, sang bên books, chỉ lấy trường name
-        res.render("listBook", {books: books,keywordFind,publisherFind });
-    } catch(err) {
-        // console.log(err.message);
+        res.render("listBook", {books: books, keywordFind, publisherFind, categories});
+
+    } catch (err) {
+        console.log(err.message);
         res.render("error");
     }
 });
